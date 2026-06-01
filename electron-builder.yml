@@ -1,6 +1,7 @@
 appId: com.sublocal.app
 productName: SubLocal
 copyright: Copyright (c) 2026 SubLocal Contributors
+electronVersion: 28.2.0
 
 directories:
   output: release
