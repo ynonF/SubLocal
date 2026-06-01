@@ -2,6 +2,11 @@
   "name": "sublocal-desktop",
   "version": "1.0.3",
   "description": "SubLocal desktop app",
+  "homepage": "https://github.com/ynonF/SubLocal",
+  "author": {
+    "name": "ynonF",
+    "email": "ynonf@users.noreply.github.com"
+  },
   "private": true,
   "main": "dist-electron/main.js",
   "scripts": {

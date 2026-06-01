@@ -38,6 +38,7 @@ mac:
   category: public.app-category.utilities
 
 linux:
+  maintainer: "ynonF <ynonf@users.noreply.github.com>"
   target:
     - target: AppImage
       arch:

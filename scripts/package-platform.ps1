@@ -74,6 +74,21 @@ Push-Location $desktopDir
 try {
     $env:CSC_IDENTITY_AUTO_DISCOVERY = "false"
     Invoke-Checked $npx @("electron-builder", $builderTarget, "--config", "../../electron-builder.yml", "--publish", "never")
+
+    if ($targetPlatform -eq "linux") {
+        $releaseDir = Join-Path $desktopDir "release"
+        $linuxOutputs = @(
+            @{ Pattern = "SubLocal-Linux-*.AppImage"; Name = "SubLocal-Linux-x64.AppImage" },
+            @{ Pattern = "SubLocal-Linux-*.deb"; Name = "SubLocal-Linux-x64.deb" }
+        )
+
+        foreach ($output in $linuxOutputs) {
+            $file = Get-ChildItem $releaseDir -Filter $output.Pattern -File | Select-Object -First 1
+            if ($file -and $file.Name -ne $output.Name) {
+                Move-Item -LiteralPath $file.FullName -Destination (Join-Path $releaseDir $output.Name) -Force
+            }
+        }
+    }
 }
 finally {
     Pop-Location
