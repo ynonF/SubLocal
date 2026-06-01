@@ -15,19 +15,23 @@ It is built for personal media, owned recordings, educational material, and any 
 - Supports optional burn-in subtitles with FFmpeg.
 - Includes right-to-left handling for Hebrew and Arabic.
 
-## Free Installers
+## Download
 
-Free unsigned installers are built by GitHub Actions:
+Download the latest static installers from GitHub Releases:
 
 | Platform | Output |
 | --- | --- |
-| Windows | NSIS `.exe` installer |
-| macOS | unsigned `.dmg` installer |
-| Linux | `.AppImage` and `.deb` packages |
+| Windows | [SubLocal-Windows-x64.exe](https://github.com/ynonF/SubLocal/releases/latest/download/SubLocal-Windows-x64.exe) |
+| macOS Apple Silicon | [SubLocal-macOS-arm64.dmg](https://github.com/ynonF/SubLocal/releases/latest/download/SubLocal-macOS-arm64.dmg) |
+| macOS Intel | [SubLocal-macOS-x64.dmg](https://github.com/ynonF/SubLocal/releases/latest/download/SubLocal-macOS-x64.dmg) |
+| Linux AppImage | [SubLocal-Linux-x64.AppImage](https://github.com/ynonF/SubLocal/releases/latest/download/SubLocal-Linux-x64.AppImage) |
+| Linux Debian/Ubuntu | [SubLocal-Linux-x64.deb](https://github.com/ynonF/SubLocal/releases/latest/download/SubLocal-Linux-x64.deb) |
 
-To build them in GitHub, open **Actions -> Build Installers -> Run workflow**. The finished installers are uploaded as workflow artifacts.
+The files are unsigned, so Windows and macOS may show a warning the first time you open them.
 
-To build locally on Windows:
+## Build Locally
+
+Build on Windows:
 
 ```powershell
 .\scripts\package-windows.ps1
@@ -39,7 +43,7 @@ To build locally on the current OS with PowerShell:
 .\scripts\package-platform.ps1
 ```
 
-macOS builds must run on macOS. Linux builds should run on Linux. The GitHub Actions workflow handles this automatically.
+macOS builds must run on macOS. Linux builds should run on Linux.
 
 ## Development Setup
 

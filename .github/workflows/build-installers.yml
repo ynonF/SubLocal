@@ -1,4 +1,4 @@
-name: Build Installers
+name: Publish Release Installers
 
 on:
   workflow_dispatch:
@@ -7,11 +7,11 @@ on:
       - "v*"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
-    name: ${{ matrix.name }}
+    name: Build ${{ matrix.name }} installer
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -21,19 +21,19 @@ jobs:
             os: windows-latest
             platform: win
             artifact: SubLocal-Windows
-            path: apps/desktop/release/*.exe
+            path: apps/desktop/release/SubLocal-Windows-x64.exe
           - name: macOS
             os: macos-latest
             platform: mac
             artifact: SubLocal-macOS
-            path: apps/desktop/release/*.dmg
+            path: apps/desktop/release/SubLocal-macOS-*.dmg
           - name: Linux
             os: ubuntu-latest
             platform: linux
             artifact: SubLocal-Linux
             path: |
-              apps/desktop/release/*.AppImage
-              apps/desktop/release/*.deb
+              apps/desktop/release/SubLocal-Linux-x64.AppImage
+              apps/desktop/release/SubLocal-Linux-x64.deb
 
     env:
       CSC_IDENTITY_AUTO_DISCOVERY: "false"
@@ -56,9 +56,35 @@ jobs:
         shell: pwsh
         run: ./scripts/package-platform.ps1 -Platform ${{ matrix.platform }}
 
-      - name: Upload installer
+      - name: Store installer for release
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
           path: ${{ matrix.path }}
           if-no-files-found: error
+
+  release:
+    name: Publish static downloads
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Download installers
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: SubLocal ${{ github.ref_name }}
+          body: |
+            Static installer downloads for SubLocal.
+
+            - Windows: `SubLocal-Windows-x64.exe`
+            - macOS Intel: `SubLocal-macOS-x64.dmg`
+            - macOS Apple Silicon: `SubLocal-macOS-arm64.dmg`
+            - Linux: `SubLocal-Linux-x64.AppImage` or `SubLocal-Linux-x64.deb`
+          files: release-assets/*
