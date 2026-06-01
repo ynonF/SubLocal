@@ -1,0 +1,64 @@
+name: Build Installers
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows
+            os: windows-latest
+            platform: win
+            artifact: SubLocal-Windows
+            path: apps/desktop/release/*.exe
+          - name: macOS
+            os: macos-latest
+            platform: mac
+            artifact: SubLocal-macOS
+            path: apps/desktop/release/*.dmg
+          - name: Linux
+            os: ubuntu-latest
+            platform: linux
+            artifact: SubLocal-Linux
+            path: |
+              apps/desktop/release/*.AppImage
+              apps/desktop/release/*.deb
+
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build installer
+        shell: pwsh
+        run: ./scripts/package-platform.ps1 -Platform ${{ matrix.platform }}
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.path }}
+          if-no-files-found: error

@@ -1,0 +1,54 @@
+appId: com.sublocal.app
+productName: SubLocal
+copyright: Copyright (c) 2026 SubLocal Contributors
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - dist-electron/**/*
+  - dist/**/*
+  - package.json
+  - node_modules/**/*
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: "${productName}-${version}-Windows-${arch}.${ext}"
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: SubLocal
+
+mac:
+  identity: null
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  artifactName: "${productName}-${version}-macOS-${arch}.${ext}"
+  category: public.app-category.utilities
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+    - target: deb
+      arch:
+        - x64
+  artifactName: "${productName}-${version}-Linux-${arch}.${ext}"
+  category: Utility
+
+extraResources:
+  - from: ../../worker/dist
+    to: worker
+    filter:
+      - "sublocal_worker*"

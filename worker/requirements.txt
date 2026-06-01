@@ -1,0 +1,3 @@
+# SubLocal Python Worker Requirements
+faster-whisper>=1.0.0
+argostranslate>=1.9.0
