@@ -45,14 +45,26 @@ $builderTarget = @{
 $npm = Resolve-NodeCommand "npm"
 $npx = Resolve-NodeCommand "npx"
 
+function Invoke-Checked {
+    param(
+        [string]$Command,
+        [string[]]$Arguments
+    )
+
+    & $Command @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Command failed with exit code $LASTEXITCODE"
+    }
+}
+
 Write-Host "Building SubLocal installer for $targetPlatform"
 
 & (Join-Path $PSScriptRoot "build-worker.ps1")
 
 Push-Location $rootDir
 try {
-    & $npm install
-    & $npm run build
+    Invoke-Checked $npm @("install")
+    Invoke-Checked $npm @("run", "build")
 }
 finally {
     Pop-Location
@@ -61,7 +73,7 @@ finally {
 Push-Location $desktopDir
 try {
     $env:CSC_IDENTITY_AUTO_DISCOVERY = "false"
-    & $npx electron-builder $builderTarget --config ../../electron-builder.yml --publish never
+    Invoke-Checked $npx @("electron-builder", $builderTarget, "--config", "../../electron-builder.yml", "--publish", "never")
 }
 finally {
     Pop-Location

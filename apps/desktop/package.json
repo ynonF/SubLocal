@@ -3,7 +3,7 @@
   "version": "1.0.3",
   "description": "SubLocal desktop app",
   "private": true,
-  "main": "dist-electron/main/main.js",
+  "main": "dist-electron/main.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
     "dev:vite": "vite",

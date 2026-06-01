@@ -9,6 +9,18 @@ $ErrorActionPreference = "Stop"
 $workerDir = Resolve-Path (Join-Path $PSScriptRoot "..\worker")
 $resolvedOutputDir = $OutputDir
 
+function Invoke-Checked {
+    param(
+        [string]$Command,
+        [string[]]$Arguments
+    )
+
+    & $Command @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Command failed with exit code $LASTEXITCODE"
+    }
+}
+
 function Resolve-Python {
     $candidates = @(
         @{ Command = "python"; Args = @() },
@@ -37,8 +49,8 @@ New-Item -ItemType Directory -Force $resolvedOutputDir | Out-Null
 
 Push-Location $workerDir
 try {
-    & $pythonCommand @pythonArgs -m pip install --upgrade pip
-    & $pythonCommand @pythonArgs -m pip install -r requirements.txt pyinstaller
+    Invoke-Checked $pythonCommand ($pythonArgs + @("-m", "pip", "install", "--upgrade", "pip"))
+    Invoke-Checked $pythonCommand ($pythonArgs + @("-m", "pip", "install", "-r", "requirements.txt", "pyinstaller"))
 
     $hiddenImports = @(
         "faster_whisper",
@@ -64,7 +76,7 @@ try {
 
     $args += "sublocal_worker/__main__.py"
 
-    & $pythonCommand @pythonArgs -m PyInstaller @args
+    Invoke-Checked $pythonCommand ($pythonArgs + @("-m", "PyInstaller") + $args)
 }
 finally {
     Pop-Location
