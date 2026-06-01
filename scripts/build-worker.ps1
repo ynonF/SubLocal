@@ -50,6 +50,10 @@ New-Item -ItemType Directory -Force $resolvedOutputDir | Out-Null
 Push-Location $workerDir
 try {
     Invoke-Checked $pythonCommand ($pythonArgs + @("-m", "pip", "install", "--upgrade", "pip"))
+    $isLinuxRuntime = (Get-Variable -Name IsLinux -ErrorAction SilentlyContinue) -and $IsLinux
+    if ($isLinuxRuntime) {
+        Invoke-Checked $pythonCommand ($pythonArgs + @("-m", "pip", "install", "torch", "--index-url", "https://download.pytorch.org/whl/cpu"))
+    }
     Invoke-Checked $pythonCommand ($pythonArgs + @("-m", "pip", "install", "-r", "requirements.txt", "pyinstaller"))
 
     $hiddenImports = @(
