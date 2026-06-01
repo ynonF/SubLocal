@@ -1,6 +1,6 @@
 {
   "name": "sublocal-desktop",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "SubLocal desktop app",
   "private": true,
   "main": "dist-electron/main/main.js",
@@ -26,7 +26,7 @@
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "electron": "^28.2.0",
-    "electron-builder": "^24.9.1",
+    "electron-builder": "^26.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^5.3.3",
